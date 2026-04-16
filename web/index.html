@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>YggMap — Yggdrasil Network Map</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+    <link rel="manifest" href="/site.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@300;400&family=Ubuntu+Mono&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+      * { box-sizing: border-box; }
+      :root {
+        --bg: #F5F5F5;
+        --text: #333333;
+        --header-bg: #FFFFFF;
+        --header-border: #E5E7EB;
+        --overlay-bg: rgba(245, 245, 245, 0.88);
+        --overlay-text: #555555;
+        --panel-bg: rgba(220, 220, 220, 0.80);
+        --panel-border: rgba(0, 0, 0, 0.10);
+        --tab-color: #555555;
+        --tab-active: #000000;
+        --logo-color: #000000;
+        --logo-suffix: #999999;
+        --input-bg: rgba(220, 220, 220, 0.80);
+        --input-text: #333333;
+        --input-placeholder: #888888;
+        --results-bg: #FFFFFF;
+        --results-hover: #7FD6FF;
+        --results-text: #555555;
+        --layout-overlay-bg: rgba(245, 245, 245, 0.80);
+        --layout-label-bg: rgba(220, 220, 220, 0.95);
+        --layout-label-border: rgba(0, 0, 0, 0.12);
+        --layout-label-text: #333333;
+      }
+      [data-theme="dark"] {
+        --bg: #111827;
+        --text: #E5E7EB;
+        --header-bg: #1F2937;
+        --header-border: #374151;
+        --overlay-bg: rgba(17, 24, 39, 0.88);
+        --overlay-text: #9CA3AF;
+        --panel-bg: rgba(31, 41, 55, 0.90);
+        --panel-border: rgba(255, 255, 255, 0.08);
+        --tab-color: #9CA3AF;
+        --tab-active: #E5E7EB;
+        --logo-color: #E5E7EB;
+        --logo-suffix: #6B7280;
+        --input-bg: rgba(31, 41, 55, 0.90);
+        --input-text: #E5E7EB;
+        --input-placeholder: #6B7280;
+        --results-bg: #1F2937;
+        --results-hover: #0369A1;
+        --results-text: #9CA3AF;
+        --layout-overlay-bg: rgba(17, 24, 39, 0.80);
+        --layout-label-bg: rgba(31, 41, 55, 0.95);
+        --layout-label-border: rgba(255, 255, 255, 0.10);
+        --layout-label-text: #E5E7EB;
+      }
+      body { margin: 0; font-family: 'Open Sans', system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--text); }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

@@ -1,0 +1,54 @@
+# yggmap configuration
+# Copy to ~/.yggmap/config.yaml or pass with -config flag
+
+admin:
+  # Admin socket address.
+  # Linux default (Unix socket):
+  socket: "unix:///var/run/yggdrasil/yggdrasil.sock"
+  # Windows/macOS or if TCP listener configured in yggdrasil.conf:
+  # socket: "tcp://127.0.0.1:9001"
+  # To enable TCP: set AdminListen in yggdrasil.conf, e.g.:
+  #   AdminListen: tcp://127.0.0.1:9001
+
+crawler:
+  # How often to re-crawl the network (Go duration string)
+  interval: 10m
+  # Fetch node names and OS info via getNodeInfo (~6 sec per node, slower crawl)
+  enable_nodeinfo: true
+  # Max concurrent getNodeInfo calls
+  nodeinfo_concurrency: 4
+  # How often (seconds) to push intermediate map updates to the UI during BFS.
+  # Lower values = more progressive loading but higher CPU/bandwidth.
+  # Set to 0 to disable mid-crawl updates (map only updates when crawl completes).
+  bfs_progress_sec: 5
+
+server:
+  # Bind address for the HTTP server (use 0.0.0.0 to expose to network)
+  bind: "127.0.0.1"
+  # HTTP port
+  port: 8080
+
+storage:
+  # Path to SQLite file for persisting the last crawl snapshot.
+  # On restart the stored snapshot is served immediately while a new crawl runs.
+  # Set to "" to disable persistence (snapshot lost on restart).
+  db_path: "~/.yggmap/graph.db"
+
+security:
+  # Bearer token for API/WebSocket access.
+  # Leave empty (default) for a fully public, open service.
+  # Set to a secret to require auth: openssl rand -hex 32
+  auth_token: ""
+
+  # Allowed origins for CORS and WebSocket connections.
+  # EMPTY LIST (default) = public mode: any origin allowed (ACAO: *).
+  # Non-empty = restricted: only exact listed origins are allowed.
+  #   Example: ["http://map.ygg", "http://myhost.ygg"]
+  allowed_origins: []
+
+  # Max HTTP requests per IP per minute (per /64 for IPv6).
+  # Protects against DoS even on a public service. 0 = disabled.
+  rate_limit_per_min: 60
+
+  # Max concurrent WebSocket connections (0 = default 256).
+  max_ws_connections: 256
