@@ -14,7 +14,14 @@
       >{{ themeStore.isDark ? '☀' : '🌙' }}</button>
     </header>
     <main class="app-content">
-      <RouterView />
+      <!-- v-slot pattern required by Vue Router 4 for KeepAlive to work.
+           Wrapping RouterView directly does not cache the route component —
+           only the v-slot form passes the actual component to KeepAlive. -->
+      <RouterView v-slot="{ Component }">
+        <KeepAlive include="MapPage">
+          <component :is="Component" />
+        </KeepAlive>
+      </RouterView>
     </main>
   </div>
 </template>

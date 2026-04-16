@@ -25,17 +25,6 @@
         </tr>
       </table>
 
-      <h2>License</h2>
-      <table class="info-table">
-        <tr>
-          <th>License</th>
-          <td><a class="mono" href="https://www.gnu.org/licenses/gpl-3.0.html" target="_blank" rel="noopener">GNU General Public License v3.0</a></td>
-        </tr>
-        <tr>
-          <th>Source</th>
-          <td><a class="mono" href="https://github.com/JB-SelfCompany/yggdrasil-map2.0" target="_blank" rel="noopener">github.com/JB-SelfCompany/yggmap</a></td>
-        </tr>
-      </table>
     </div>
   </div>
 </template>

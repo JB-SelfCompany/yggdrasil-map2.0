@@ -28,6 +28,8 @@
 </template>
 
 <script setup lang="ts">
+// Explicit component name required for <KeepAlive include="MapPage"> in App.vue
+defineOptions({ name: 'MapPage' })
 import { onMounted, computed } from 'vue'
 import { useGraphStore } from '../stores/graph'
 import GraphCanvas from '../components/GraphCanvas.vue'

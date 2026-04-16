@@ -41,6 +41,58 @@ export const useGraphStore = defineStore('graph', () => {
   const wsStatus = ref<'CONNECTING' | 'OPEN' | 'CLOSED' | 'ERROR'>('CONNECTING')
   const config = ref<AppConfig | null>(null)
 
+  // ── WebSocket — initialized once at store creation, lives for app lifetime ──
+  // Must NOT be inside connect() / onMounted: VueUse's useWebSocket registers
+  // tryOnScopeDispose cleanup, which would close the socket whenever MapPage
+  // unmounts, causing "Waiting" on every return to the Network tab.
+  const { status, data } = useWebSocket(resolveWsUrl(), {
+    autoReconnect: {
+      retries: 30,
+      delay: 3000,
+      onFailed() {
+        wsStatus.value = 'ERROR'
+      }
+    },
+    onConnected() {
+      wsStatus.value = 'OPEN'
+    },
+    onDisconnected() {
+      wsStatus.value = 'CLOSED'
+    },
+    onError() {
+      wsStatus.value = 'ERROR'
+    }
+  })
+
+  watch(
+    status,
+    (s) => {
+      if (s === 'OPEN' || s === 'CONNECTING' || s === 'CLOSED') {
+        wsStatus.value = s
+      }
+    },
+    { immediate: true }
+  )
+
+  watch(data, (raw: string | null) => {
+    if (!raw) return
+    try {
+      const msg = JSON.parse(raw) as WSMessage
+      if (msg.type === 'snapshot') {
+        if (isGraphSnapshot(msg.data)) {
+          snapshot.value = msg.data
+        }
+      } else if (msg.type === 'crawl_progress') {
+        if (isCrawlProgress(msg.data)) {
+          crawlRunning.value = msg.data.running
+          crawlProgress.value = msg.data.visited
+        }
+      }
+    } catch {
+      // Ignore malformed messages
+    }
+  })
+
   // ── Getters ────────────────────────────────────────────────────────────────
   const nodeCount = computed(() =>
     snapshot.value ? Object.keys(snapshot.value.nodes).length : 0
@@ -58,68 +110,18 @@ export const useGraphStore = defineStore('graph', () => {
 
   // ── Actions ────────────────────────────────────────────────────────────────
   function connect() {
-    // Fetch app config once at startup; failure is non-fatal.
-    fetchConfig()
-      .then((cfg) => { config.value = cfg })
-      .catch((err) => { console.warn('yggmap: fetchConfig failed:', err) })
-
-    // Pre-populate snapshot from REST before WS delivers — eliminates "Waiting for data"
-    // on page refresh when the backend already has data from SQLite or a previous crawl.
-    fetchGraph()
-      .then((data) => { if (!snapshot.value) snapshot.value = data })
-      .catch(() => { /* no data yet, WS will provide */ })
-
-    const { status, data } = useWebSocket(resolveWsUrl(), {
-      autoReconnect: {
-        retries: 30,
-        delay: 3000,
-        onFailed() {
-          wsStatus.value = 'ERROR'
-        }
-      },
-      onConnected() {
-        wsStatus.value = 'OPEN'
-      },
-      onDisconnected() {
-        wsStatus.value = 'CLOSED'
-      },
-      onError() {
-        wsStatus.value = 'ERROR'
-      }
-    })
-
-    // Mirror VueUse status string onto our typed ref
-    // VueUse uses 'OPEN' | 'CONNECTING' | 'CLOSED'
-    // We handle 'ERROR' ourselves via onError callback above
-    watch(
-      status,
-      (s) => {
-        if (s === 'OPEN' || s === 'CONNECTING' || s === 'CLOSED') {
-          wsStatus.value = s
-        }
-      },
-      { immediate: true }
-    )
-
-    // Process incoming WebSocket messages
-    watch(data, (raw: string | null) => {
-      if (!raw) return
-      try {
-        const msg = JSON.parse(raw) as WSMessage
-        if (msg.type === 'snapshot') {
-          if (isGraphSnapshot(msg.data)) {
-            snapshot.value = msg.data
-          }
-        } else if (msg.type === 'crawl_progress') {
-          if (isCrawlProgress(msg.data)) {
-            crawlRunning.value = msg.data.running
-            crawlProgress.value = msg.data.visited
-          }
-        }
-      } catch {
-        // Ignore malformed messages
-      }
-    })
+    // Fetch config and snapshot via REST on first visit; both are no-ops if
+    // data is already present (store is a singleton).
+    if (!config.value) {
+      fetchConfig()
+        .then((cfg) => { config.value = cfg })
+        .catch((err) => { console.warn('yggmap: fetchConfig failed:', err) })
+    }
+    if (!snapshot.value) {
+      fetchGraph()
+        .then((d) => { if (!snapshot.value) snapshot.value = d })
+        .catch(() => { /* no data yet, WS will provide */ })
+    }
   }
 
   function selectNode(key: string | null) {

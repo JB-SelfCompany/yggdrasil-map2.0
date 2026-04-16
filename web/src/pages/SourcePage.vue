@@ -37,7 +37,7 @@
       </table>
 
       <h2>License</h2>
-      <p>Released under the MIT License.</p>
+      <p>Released under the GPLv3 License.</p>
     </div>
   </div>
 </template>

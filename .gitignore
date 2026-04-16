@@ -1,6 +1,7 @@
 # Build output
 /dist/
 /web/dist/
+/internal/web/dist
 
 # Go binaries
 *.exe
