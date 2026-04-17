@@ -11,14 +11,7 @@
           <th>Edges</th>
           <td>{{ store.edgeCount }}</td>
         </tr>
-        <tr>
-          <th>Crawl interval</th>
-          <td>{{ formatDuration(store.config?.crawler_interval) }}</td>
-        </tr>
-        <tr>
-          <th>Map update interval</th>
-          <td>{{ formatDuration(store.config?.crawler_interval) }} <span class="hint">(refreshes after each crawl)</span></td>
-        </tr>
+
         <tr v-if="store.snapshot">
           <th>Last update</th>
           <td>{{ formatTime(store.snapshot.timestamp) }}</td>
@@ -34,14 +27,6 @@ import { useGraphStore } from '../stores/graph'
 
 const store = useGraphStore()
 
-function formatDuration(s?: string): string {
-  if (!s) return '...'
-  return s
-    .replace(/(\d+)h/, '$1 hr ')
-    .replace(/(\d+)m/, '$1 min ')
-    .replace(/(\d+)s/, '$1 sec')
-    .trim()
-}
 
 function formatTime(iso: string): string {
   try {

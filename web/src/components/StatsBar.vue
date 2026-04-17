@@ -3,7 +3,6 @@
     <span class="stats-text">
       {{ store.nodeCount }} nodes / {{ store.edgeCount }} edges
       <template v-if="updatedAgo">/ Updated {{ updatedAgo }}</template>
-      <template v-if="crawlLabel">/ Crawl: {{ crawlLabel }}</template>
     </span>
     <span class="ws-dot" :class="wsClass" :title="store.wsStatus"></span>
   </div>
@@ -32,20 +31,6 @@ const wsClass = computed(() => ({
   'ws-dot--connecting': store.wsStatus === 'CONNECTING',
   'ws-dot--closed': store.wsStatus === 'CLOSED' || store.wsStatus === 'ERROR',
 }))
-
-function formatDuration(s?: string): string {
-  if (!s) return '...'
-  return s
-    .replace(/(\d+)h/, '$1 hr ')
-    .replace(/(\d+)m/, '$1 min ')
-    .replace(/(\d+)s/, '$1 sec')
-    .trim()
-}
-
-const crawlLabel = computed<string | null>(() => {
-  if (!store.config) return null
-  return formatDuration(store.config.crawler_interval)
-})
 
 const updatedAgo = computed<string | null>(() => {
   if (!store.snapshot?.timestamp) return null
